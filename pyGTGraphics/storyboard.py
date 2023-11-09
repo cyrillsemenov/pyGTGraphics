@@ -14,7 +14,7 @@ class Animation:
         self.duration = duration
         self.interpolation = interpolation
         self.direction = direction
-        self.center_axis = center_axis
+        # self.center_axis = center_axis
 
     def to_xml(self, parent):
         attributes = {
@@ -23,7 +23,7 @@ class Animation:
             "Duration": str(self.duration),
             "Interpolation": self.interpolation,
             "Direction": self.direction,
-            "CenterAxis": self.center_axis
+            # "CenterAxis": self.center_axis
         }
         return ET.SubElement(parent, self._tag, **attributes)
 

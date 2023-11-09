@@ -66,9 +66,11 @@ class TextBlock(BaseGTObject):
         self.font_size = kwargs.get("font_size", 34)
         self.font_weight = kwargs.get("font_weight", "Regular")
         self.text_align = kwargs.get("text_align", "Left")
-        self.ignore_overhang = kwargs.get("ignore_overhang", True)
+        self.vertical_align = kwargs.get("vertical_align", "Center")
+        self.word_wrapping = kwargs.get("word_wrapping", "NoWrap")
+        self.ignore_overhang = kwargs.get("ignore_overhang", False)
         self.line_spacing = kwargs.get("line_spacing", 0)
-        self.auto_size = kwargs.get("auto_size", "Width")
+        self.auto_size = kwargs.get("auto_size", "Fixed")
 
         self.fill = "#00000000"
         self.stroke = "#00000000"
@@ -79,13 +81,14 @@ class TextBlock(BaseGTObject):
             Name=self.name,
             Dimensions=f"%i,%i,%i" % (self.width, self.height, 0),
             Location="%i,%i,%i" % (self.x, self.y, 0),
-            DataFlags="ShowVisible",
+            # DataFlags="ShowVisible",
             Text=self.text,
             FontFamily=self.font_family,
             FontSize=str(self.font_size),
             FontWeight=self.font_weight,
             TextAlign=self.text_align,
-            IgnoreOverhang=str(self.ignore_overhang),
+            # TextWordWrapping=self.word_wrapping,
+            # IgnoreOverhang=str(self.ignore_overhang),
             LineSpacing=str(self.line_spacing),
             AutoSize=self.auto_size
         )
@@ -98,12 +101,31 @@ class TextBlock(BaseGTObject):
 
 class Rectangle(BaseGTObject):
     _tag = 'Rectangle'
+    _bound = None
+    _padding = "%i,%i,%i,%i"
+
+    def set_bounding(self, obj, padding=None):
+        self._bound = obj.name
+        if isinstance(padding, int):
+            padding = (padding,)
+        pad_dimensions = len(padding) if padding else 0
+        if pad_dimensions == 1:
+            self._padding %= (padding[0], padding[0], padding[0], padding[0])
+        elif pad_dimensions < 4:
+            self._padding %= (padding[0], padding[1], padding[0], padding[1])
+        elif pad_dimensions == 4:
+            self._padding %= padding
+        else:
+            self._padding %= (0, 0, 0, 0)
 
     def to_xml(self, parent):
         element = ET.SubElement(parent, self._tag,
                                 Name=self.name,
                                 Dimensions=f"%i,%i,%i" % (self.width, self.height, 0),
                                 Location="%i,%i,%i" % (self.x, self.y, 0))
+        if self._bound:
+            bounding = ET.SubElement(element, 'Rectangle.Bounding')
+            ET.SubElement(bounding, "Bounding", Object=self._bound, Padding=self._padding)
         fill = ET.SubElement(element, 'Rectangle.Fill')
         ET.SubElement(fill, "Brush", Color=self.fill)
         stroke = ET.SubElement(element, 'Rectangle.Stroke')
