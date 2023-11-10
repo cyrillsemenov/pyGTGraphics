@@ -1,44 +1,26 @@
 import xml.etree.ElementTree as ET
+from typing import Optional
+
+from .properties import AnimationProperties, AnimationDirection, AnimationInterpolation
 
 
 class Animation:
     _tag = "None"
 
     def __init__(
-            self, target, start_time: int = 0, duration: int = 1,
-            interpolation: str = "Linear", direction: str = "Left",
-            center_axis: str = "X"
+            self, target, duration: float = 1.0, delay: Optional[float] = None,
+            interpolation: Optional[str] = None, direction: Optional[str] = None,
+            center_axis: str = "X", **kwargs
     ):
+        self.properties = AnimationProperties(duration, delay, interpolation, direction)
         self.target = target
-        self.start_time = start_time
-        self.duration = duration
-        self.interpolation = interpolation
-        self.direction = direction
-        # self.center_axis = center_axis
 
     def to_xml(self, parent):
-        attributes = {
-            "Object": self.target.name,
-            "Delay": str(self.start_time),
-            "Duration": str(self.duration),
-            "Interpolation": self.interpolation,
-            "Direction": self.direction,
-            # "CenterAxis": self.center_axis
-        }
-        return ET.SubElement(parent, self._tag, **attributes)
+        return ET.SubElement(parent, self._tag, **self.properties.dict(target=self.target))
 
 
 class RevealAnimation(Animation):
     _tag = "Reveal"
-    #
-    # def __init__(self, target, direction, **kwargs):
-    #     super().__init__(target, **kwargs)
-    #     self.direction = direction
-    #
-    # def to_xml(self):
-    #     element = super().to_xml()
-    #     element.attrib["Direction"] = self.direction
-    #     return element
 
 
 class FadeAnimation(Animation):

@@ -19,7 +19,7 @@ if __name__ == "__main__":
             "Text 1",
             60, 800, 1860, 100,
             "HERE WE ARE",
-            TEXT_PROPS.with_attribute(auto_size=AutoSizeOptions.WIDTH_AND_HEIGHT)
+            TEXT_PROPS.with_attribute(auto_size=AutoSizeOptions.WIDTH_AND_HEIGHT, font_weight="Bold")
         )
         text1.set_fill(WHITE)
         rect1.set_bounding(text1, 15)
@@ -36,7 +36,7 @@ if __name__ == "__main__":
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. "
             "Voluptatum facilis nobis earum eos ipsa consectetur incidunt "
             "vitae beatae soluta nihil doloremque, est esse debitis.",
-            TEXT_PROPS.with_attribute(size=30)
+            TEXT_PROPS.with_attribute(font_size=30)
         )
         rect2.set_bounding(text2, 15)
         text2.set_fill(BLACK)

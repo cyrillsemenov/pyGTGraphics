@@ -179,3 +179,43 @@ class Colour:
 
     def __repr__(self):
         return self.__str__()
+
+
+@dataclass(frozen=True)
+class AnimationInterpolation:
+    LINEAR: str = "Linear"
+    CUBE_EASE_IN: str = "CubicEasingIn"
+    CUBE_EASE_OUT: str = "CubicEasingOut"
+    CUBE_EASE_IN_OUT: str = "CubicEasingInOut"
+    BOUNCE_IN: str = "BounceIn"
+    BOUNCE_OUT: str = "BounceOut"
+
+
+@dataclass(frozen=True)
+class AnimationDirection:
+    TOP: str = "Top"
+    DOWN: str = "Down"
+    LEFT: str = "Left"
+    RIGHT: str = "Right"
+
+
+@dataclass
+class AnimationProperties(ObjectProperties):
+    duration: float
+    delay: Optional[float] = None
+    interpolation: Optional[str] = None
+    direction: Optional[str] = None
+
+    def dict(self, include_none: bool = False, **kwargs) -> Dict[str, str]:
+        target = kwargs.pop("target")
+        result = {
+            "Object": target.name,
+            "Duration": self.duration,
+            "Delay": self.delay,
+            "Interpolation": self.interpolation,
+            "Direction": self.direction,
+            # "CenterAxis": self.center_axis
+        }
+        result = {k: str(v) for k, v in result.items() if v is not None or include_none}
+        result.update(**kwargs)
+        return result
