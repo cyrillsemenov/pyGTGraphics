@@ -1,12 +1,102 @@
 """
-Description: This module defines the Colour class which represents RGBA colours
-             and provides methods for colour manipulation.
+Description: This module defines the properties of graphic objects.
 Author: Cyrill Semenov
 Date Created: 2023/11/09
 Date Modified: 2023/11/09
 Version: 1.0
 License: MIT License
 """
+
+from copy import copy
+from dataclasses import dataclass, asdict
+from typing import Dict, Optional
+
+
+@dataclass
+class ObjectProperties:
+    def dict(self, include_none: bool = False, **kwargs) -> Dict[str, str]:
+        """
+        Convert the dataclass fields to a dictionary with string values.
+
+        Args:
+            include_none (bool): Flag to include fields with None values.
+            **kwargs: Additional key-value pairs to add to the result.
+
+        Returns:
+            Dict[str, str]: Dictionary representation of the dataclass fields.
+        """
+        result = {k: str(v) for k, v in asdict(self).items() if v is None or include_none}
+        return result
+
+
+@dataclass(frozen=True)
+class TextAlignmentOptions:
+    LEFT: str = "Left"
+    CENTER: str = "Center"
+    RIGHT: str = "Right"
+
+
+@dataclass(frozen=True)
+class VerticalAlignmentOptions:
+    TOP: str = "Top"
+    CENTER: str = "Center"
+    BOTTOM: str = "Bottom"
+
+
+@dataclass(frozen=True)
+class WordWrappingOptions:
+    NOWRAP: str = "NoWrap"
+    WRAP: str = "Wrap"
+
+
+@dataclass(frozen=True)
+class AutoSizeOptions:
+    FIXED: str = "Fixed"
+    WIDTH: str = "Width"
+    HEIGHT: str = "Height"
+    WIDTH_AND_HEIGHT: str = "WidthAndHeight"
+    SHRINK: str = "Shrink"
+
+
+@dataclass
+class TextProperties(ObjectProperties):
+    font_family: str
+    font_size: int
+    text_align: str = TextAlignmentOptions.LEFT
+    font_weight: Optional[str] = None
+    vertical_align: Optional[str] = None
+    word_wrapping: Optional[str] = None
+    ignore_overhang: Optional[bool] = None
+    line_spacing: Optional[int] = None
+    auto_size: Optional[str] = None
+
+    def dict(self, include_none: bool = False, **kwargs) -> Dict[str, str]:
+        text_block = kwargs.pop("text_block")
+        result = {
+            "Name": text_block.name,
+            "Dimensions": f"%i,%i,%i" % (text_block.width, text_block.height, 0),
+            "Location": "%i,%i,%i" % (text_block.x, text_block.y, 0),
+            "DataFlags": "ShowVisible",
+            "Text": text_block.text,
+            "FontFamily": self.font_family,
+            "FontSize": self.font_size,
+            "FontWeight": self.font_weight,
+            "TextAlign": self.text_align,
+            "TextWordWrapping": self.word_wrapping,
+            "IgnoreOverhang": self.ignore_overhang,
+            "LineSpacing": self.line_spacing,
+            "AutoSize": self.auto_size
+        }
+        result = {k: str(v) for k, v in result.items() if v is None or include_none}
+        result.update(**kwargs)
+        return result
+
+    def with_attribute(self, **kwargs):
+        new_props = copy(self)
+        for k, v in kwargs.items():
+            new_props.__setattr__(k, v)
+        return new_props
+
 
 class Colour:
     def __init__(self, r: float, g: float, b: float, a: float) -> None:
@@ -89,4 +179,3 @@ class Colour:
 
     def __repr__(self):
         return self.__str__()
-

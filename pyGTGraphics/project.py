@@ -35,6 +35,9 @@ class Project:
         self.types = ContentTypes()
         self.filename = filename
 
+    def create_layer(self, name: str, x: int = None, y: int = None, width: int = None, height: int = None):
+        return self.document.create_layer(name, x, y, width, height)
+
     def save(self, filename=None) -> None:
         """
         Save the project to a file.
@@ -75,7 +78,7 @@ class Project:
         if not output_file:
             raise ValueError("Filename must be provided.")
 
-        with zipfile.ZipFile("questions.gtzip", "w", zipfile.ZIP_STORED, allowZip64=False) as zf:
+        with zipfile.ZipFile(output_file, "w", zipfile.ZIP_STORED, allowZip64=False) as zf:
             print(zf.filename)
             for filename in os.listdir(self._dir.name):
                 f = os.path.join(self._dir.name, filename)
