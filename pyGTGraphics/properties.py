@@ -87,7 +87,7 @@ class TextProperties(ObjectProperties):
             "LineSpacing": self.line_spacing,
             "AutoSize": self.auto_size
         }
-        result = {k: str(v) for k, v in result.items() if v is None or include_none}
+        result = {k: str(v) for k, v in result.items() if v is not None or include_none}
         result.update(**kwargs)
         return result
 

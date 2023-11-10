@@ -79,7 +79,6 @@ class Root:
         return ET.ElementTree(comp_element)
 
 
-
 class BaseGTObject:
     def __init__(self, name: str, x: int, y: int, width: int, height: int):
         self.name = name
