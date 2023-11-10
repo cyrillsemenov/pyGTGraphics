@@ -58,7 +58,7 @@ class Root:
             Layer: The created layer object with the specified name, position, and dimensions.
         """
         _x, _y = x or 0, y or 0
-        _w, _h = width or (self.width - x), height or (self.height - y)
+        _w, _h = width or (self.width - _x), height or (self.height - _y)
         new_layer = Layer(name, _x, _y, _w, _h)
         self.layers[name] = new_layer
         return new_layer
