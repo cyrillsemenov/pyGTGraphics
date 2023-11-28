@@ -3,7 +3,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
 
-from pyGTGraphics.objects import Root
+from pyGTGraphics.objects import Layer, Root
 from pyGTGraphics.content import ContentTypes
 from pyGTGraphics.resources import Resources
 from pyGTGraphics.xml_utils import write_xml
@@ -35,7 +35,7 @@ class Project:
         self.types = ContentTypes()
         self.filename = filename
 
-    def create_layer(self, name: str, x: int = None, y: int = None, width: int = None, height: int = None):
+    def create_layer(self, name: str, x: int = None, y: int = None, width: int = None, height: int = None) -> Layer:
         return self.document.create_layer(name, x, y, width, height)
 
     def save(self, filename=None) -> None:
