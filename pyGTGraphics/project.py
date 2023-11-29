@@ -3,6 +3,7 @@ import tempfile
 import xml.etree.ElementTree as ET
 import zipfile
 
+from pyGTGraphics.layout import Layout
 from pyGTGraphics.objects import Layer, Root
 from pyGTGraphics.content import ContentTypes
 from pyGTGraphics.resources import Resources
@@ -19,7 +20,7 @@ class Project:
         types (ContentTypes): Manager for content types used in the project.
         filename (str): The name of the file to save the project to.
     """
-    def __init__(self, width: int, height: int, filename=None) -> None:
+    def __init__(self, width: int, height: int, filename=None, *args, **kwargs) -> None:
         """
         Initialize a new Project instance.
 
@@ -34,6 +35,7 @@ class Project:
         self.resources = Resources()
         self.types = ContentTypes()
         self.filename = filename
+        self.layout = Layout(x=kwargs.get("x", 0), y=kwargs.get("y", 0), width=width, height=height)
 
     def create_layer(self, name: str, x: int = None, y: int = None, width: int = None, height: int = None) -> Layer:
         return self.document.create_layer(name, x, y, width, height)

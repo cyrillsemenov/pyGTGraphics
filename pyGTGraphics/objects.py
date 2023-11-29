@@ -12,8 +12,9 @@ from inspect import signature, Parameter
 from numbers import Number
 from typing import Optional, SupportsIndex, Union, Any, List, Type
 
-from pyGTGraphics.properties import TextProperties, Colour
+from pyGTGraphics.properties import Colour
 from pyGTGraphics.storyboard import Storyboard
+from pyGTGraphics.text_properties import TextProperties
 
 PAD_STR = "%i,%i,%i,%i"
 
@@ -160,7 +161,7 @@ class Layer:
             type_of_object: Type['BaseGTObject'],
             index: SupportsIndex = -1, **kwargs
     ) -> Type['BaseGTObject']:
-        self.children.insert(index, type_of_object(**kwargs))
+        self.children.insert(index if index > 0 else len(self.children), type_of_object(**kwargs))
         return self.children[index]
 
     def create_textblock(
@@ -218,6 +219,21 @@ class BaseGTObject:
         Arg("height", type=Number, optional=False),
     ]
 
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value) -> None:
+        setattr(self, key, value)
+
+    def keys(self):
+        return [k.attribute for k in self._args if self[k.attribute] is not None]
+
+    def items(self):
+        return ((key, self[key]) for key in self.keys())
+
+    def __iter__(self):
+        return iter(self.keys())
+
     def __init_subclass__(cls, **_kwargs) -> None:
         super().__init_subclass__()
         cls._tag = _kwargs.get("tag", cls.__name__)
@@ -253,9 +269,9 @@ class BaseGTObject:
             k, v = a.attribute, kwargs.get(a.attribute, a.default)
             if not (a.optional or v is not None):
                 raise TypeError(f"{self.__class__.__name__} takes {k} attribute")
-            if a.type and not isinstance(v, (a.type,)):
+            if v is not None and a.type and not isinstance(v, (a.type,)):
                 raise TypeError(
-                    f"{self.__class__.__name__}.{k} requires"
+                    f"{self.__class__.__name__}.{k} requires "
                     f"a '{a.type.__name__}' but received a '{type(v).__name__}'"
                 )
             setattr(self, k, v)
@@ -279,12 +295,27 @@ class BaseGTObject:
 
 class TextBlock(BaseGTObject, init_args=[
     Arg("text", type=str, optional=False),
-    Arg("properties", type=TextProperties, optional=False)
+    Arg("font_family", type=str, optional=False),
+    Arg("font_size", type=Number, optional=False),
+    Arg("font_weight", type=str),
+    Arg("text_align", type=str),
+    Arg("vertical_align", type=str),
+    Arg("word_wrapping", type=str),
+    Arg("ignore_overhang", type=bool),
+    Arg("line_spacing", type=Number),
+    Arg("auto_size", type=str),
+    Arg("data_flags", type=str)
 ]):
+    def get_properties(self) -> TextProperties:
+        return TextProperties(**self)
 
     def to_xml(self, parent):
-        element = ET.SubElement(parent, 'TextBlock', **self.properties.dict(text_block=self))
-
+        element = ET.SubElement(parent, self._tag,
+                                Name=self.name,
+                                Dimensions=f"%i,%i,%i" % (self.width, self.height, 0),
+                                Location="%i,%i,%i" % (self.x, self.y, 0),
+                                Text=self.text,
+                                **TextProperties(**self).to_xml())
         fill = ET.SubElement(element, 'TextBlock.Fill')
         ET.SubElement(fill, "Brush", Color=str(self.fill))
         stroke = ET.SubElement(element, 'TextBlock.Stroke')
