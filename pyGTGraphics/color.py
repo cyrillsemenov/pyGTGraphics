@@ -7,6 +7,8 @@ Version: 1.0
 License: MIT License
 """
 
+from random import random
+
 
 class ColorMeta(type):
     """
@@ -145,6 +147,17 @@ class Color(metaclass=ColorMeta):
             Color: The created Color instance.
         """
         return cls(r / 255, g / 255, b / 255, a / 255)
+
+    @classmethod
+    def random_color(cls) -> "Color":
+        """
+        Generates a random Color. Useful for testing purporses.
+
+        Returns:
+            Color: The created Color instance.
+        """
+        # trunk-ignore(bandit/B311)
+        return cls(random(), random(), random())
 
     def with_alpha(self, a: float) -> "Color":
         return Color(**dict(self, a=a))
