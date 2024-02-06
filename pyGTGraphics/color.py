@@ -1,12 +1,3 @@
-"""
-Description: This module defines layout building blocks
-Author: Cyrill Semenov
-Date Created: 2024/02/06
-Date Modified: 2024/02/06
-Version: 1.0
-License: MIT License
-"""
-
 from random import random
 
 
