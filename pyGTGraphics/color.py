@@ -13,6 +13,12 @@ class ColorMeta(type):
     Methods:
         __getattr__(cls, name: str) -> Any: A class method that enables accessing
                                            predefined colors as class attributes.
+
+    Example:
+    >>> Color.red
+    #0000FFFF
+    >>> Color.transparent_black
+    #00000000
     """
 
     presets = dict(
@@ -73,11 +79,40 @@ class Color(metaclass=ColorMeta):
     Methods:
         from_hex(hex: str, brga: bool = False): Creates a Color instance from a hexadecimal string.
         from_int(r: int, g: int, b: int, a: int = 255): Creates a Color instance from integer values.
+
+    Example usage:
+    >>> Color(1.0, 0.0, 0.0)
+    #0000FFFF
+
+    Accessing a predefined color:
+    >>> Color.green
+    #00FF00FF
+
+    Creating a color from hexadecimal:
+    >>> Color.from_hex("#FF00FF")
+    #FF00FFFF
+
+    Creating a color from integers:
+    >>> Color.from_int(255, 165, 0)
+    #00A5FFFF
     """
 
     string_template: str = "#{b:02X}{g:02X}{r:02X}{a:02X}"
 
     def __init__(self, r: float, g: float, b: float, a: float = 1.0) -> None:
+        """
+        Initializes a Color instance with RGBA components.
+
+        Args:
+            r (float): Red component, range [0, 1].
+            g (float): Green component, range [0, 1].
+            b (float): Blue component, range [0, 1].
+            a (float, optional): Alpha (transparency) component, range [0, 1]. Defaults to 1.0 (opaque).
+
+        Example:
+        >>> Color(0.5, 0.4, 0.3)
+        #4C667FFF
+        """
         self.r: float = r
         self.g: float = g
         self.b: float = b
@@ -110,6 +145,12 @@ class Color(metaclass=ColorMeta):
 
         Returns:
             Color: The created Color instance.
+
+        Example:
+        >>> Color.from_hex("#FFA500")
+        #00A5FFFF
+        >>> Color.from_hex("#00A5FF", brga=True)
+        #00A5FFFF
         """
         hex = hex.lstrip("#")
         r, g, b, a = (
@@ -136,6 +177,10 @@ class Color(metaclass=ColorMeta):
 
         Returns:
             Color: The created Color instance.
+
+        Example:
+        >>> Color.from_int(255, 165, 0)
+        #00A5FFFF
         """
         return cls(r / 255, g / 255, b / 255, a / 255)
 
@@ -151,8 +196,23 @@ class Color(metaclass=ColorMeta):
         return cls(random(), random(), random())
 
     def with_alpha(self, a: float) -> "Color":
+        """
+        Returns a new Color instance with the specified alpha value.
+
+        Args:
+            a (float): Alpha (transparency) component, range [0, 1].
+
+        Returns:
+            Color: A new Color instance with updated alpha value.
+
+        Example:
+        >>> Color(1.0, 0.0, 0.0).with_alpha(0.5)
+        #0000FF7F
+        """
         return Color(**dict(self, a=a))
 
 
 if __name__ == "__main__":
-    pass
+    import doctest
+
+    print(doctest.testmod())
