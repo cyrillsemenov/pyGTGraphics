@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from numbers import Number
-from typing import Optional, Any
+from typing import Optional
 
 
 class TextProperties(dict):
@@ -17,18 +17,20 @@ class TextProperties(dict):
         "auto_size": "AutoSize",
     }
 
-    def __init__(self,
-                 font_family: str,
-                 font_size: Number,
-                 text_align: str = "left",
-                 font_weight: Optional[str] = None,
-                 vertical_align: Optional[str] = None,
-                 word_wrapping: Optional[str] = None,
-                 ignore_overhang: Optional[bool] = None,
-                 line_spacing: Optional[int] = None,
-                 auto_size: Optional[str] = None,
-                 *args, **kwargs
-                 ) -> None:
+    def __init__(
+        self,
+        font_family: str,
+        font_size: Number,
+        text_align: str = "left",
+        font_weight: Optional[str] = None,
+        vertical_align: Optional[str] = None,
+        word_wrapping: Optional[str] = None,
+        ignore_overhang: Optional[bool] = None,
+        line_spacing: Optional[int] = None,
+        auto_size: Optional[str] = None,
+        *args,
+        **kwargs
+    ) -> None:
         super().__init__()
         self.font_family = font_family
         self.font_size = font_size
