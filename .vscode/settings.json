@@ -1,5 +1,9 @@
 {
   "python.testing.pytestEnabled": true,
-  "python.testing.pytestArgs": ["pyGTGraphics"],
+  "python.testing.pytestArgs": [
+    "--doctest-modules",
+    "--doctest-report",
+    "ndiff"
+  ],
   "python.testing.unittestEnabled": false
 }
