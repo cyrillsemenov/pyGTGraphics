@@ -1,6 +1,6 @@
 from pyGTGraphics.project import Project
 from pyGTGraphics.properties import Colour
-from pyGTGraphics.storyboard import Storyboard, RevealAnimation
+from pyGTGraphics.storyboard import RevealAnimation, Storyboard
 from pyGTGraphics.text_properties import TextProperties
 
 TEXT_PROPS = TextProperties(font_family="Century Gothic", font_size=90)
@@ -12,6 +12,7 @@ if __name__ == "__main__":
     with Project(1920, 1080, "basic_example.gtzip") as proj:
         layer1 = proj.create_layer("Layer 1")
         assert layer1 == proj.document.layers["Layer 1"]
+
         proj.layout.pad(60)
         proj.layout.take_from_top(1000)
         rect1 = layer1.create_rectangle("Rect 1", **proj.layout)
@@ -21,11 +22,14 @@ if __name__ == "__main__":
             "Text 1",
             text="HERE WE ARE",
             **proj.layout.take_from_top(100),
-            **TEXT_PROPS.with_attribute(auto_size=TextProperties.AutoSize.WIDTH_AND_HEIGHT, font_weight="Bold")
+            **TEXT_PROPS.with_attribute(
+                auto_size=TextProperties.AutoSize.WIDTH_AND_HEIGHT, font_weight="Bold"
+            )
         )
 
         text1.set_fill(WHITE)
         rect1.set_bounding(text1, 15)
+
         layer1.children.append(rect1)
         assert proj.document.layers["Layer 1"].children[-1] == rect1
         layer1.children.append(text1)
